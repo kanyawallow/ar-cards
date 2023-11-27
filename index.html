@@ -3,7 +3,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <link rel="stylesheet" href="./styles.css" />
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
     <script src="./script.js"></script>
 
@@ -34,13 +34,20 @@
     <div class="example-container">
       <div id="example-scanning-overlay" class="hidden">
         <div class="inner">
-          <img crossorigin="anonymous" src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/cfdcard.jpg?v=1700235551120" />
+          <img
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/cfdcard.jpg?v=1700235551120"
+          />
           <div class="scanline"></div>
         </div>
       </div>
 
       <a-scene
-        mindar-image="imageTargetSrc: ./assets/targets.mind; showStats: false; uiScanning: #example-scanning-overlay;"
+        mindar-image="
+          imageTargetSrc: ./assets/targets.mind; 
+          showStats: false; 
+          uiScanning: #example-scanning-overlay;
+          filterMinCF: 0.0001"
         embedded
         color-space="sRGB"
         renderer="colorManagement: true, physicallyCorrectLights"
@@ -48,7 +55,11 @@
         device-orientation-permission-ui="enabled: false"
       >
         <a-assets>
-          <img id="card" crossorigin="anonymous" src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/cfdcard.jpg?v=1700235551120" />
+          <img
+            id="card"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/cfdcard.jpg?v=1700235551120"
+          />
           <img id="icon-web" src="./assets/icons/web.png" />
           <img id="icon-location" src="./assets/icons/location.png" />
           <img id="icon-profile" src="./assets/icons/profile.png" />
@@ -57,7 +68,10 @@
           <img id="icon-play" src="./assets/icons/play.png" />
           <img id="icon-left" src="./assets/icons/left.png" />
           <img id="icon-right" src="./assets/icons/right.png" />
-          <img id="paintandquest-preview" src="./assets/portfolio/paintandquest-preview.png" />
+          <img
+            id="paintandquest-preview"
+            src="./assets/portfolio/paintandquest-preview.png"
+          />
           <video
             id="paintandquest-video-mp4"
             autoplay="false"
@@ -75,10 +89,7 @@
             id="coffeemachine-preview"
             src="./assets/portfolio/coffeemachine-preview.png"
           />
-          <img
-            id="peak-preview"
-            src="./assets/portfolio/peak-preview.png"
-          />
+          <img id="peak-preview" src="./assets/portfolio/peak-preview.png" />
 
           <a-asset-item
             id="avatarModel"
