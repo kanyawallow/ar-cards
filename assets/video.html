@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Example 1</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://unpkg.com/aframe-websurfaces@1.4.0/dist/aframe-websurfaces.umd.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <!--Camera-->
+      <a-entity
+        wasd-controls="acceleration: 20;"
+        camera="active: true"
+        look-controls="pointerLockEnabled: false"
+        raycaster="far: 10000; objects: .clickable"
+        position="0 1.6 0"
+      >
+        <a-cursor position="0 0 -.05" scale=".04 .04 1" raycaster="objects: .clickable"></a-cursor>
+      </a-entity>
+
+      <!--Environment-->
+      <a-sky color="#aff"></a-sky>
+      <a-plane
+        rotation="-90 0 0"
+        width="20"
+        height="20"
+        color="#3fa841"
+      ></a-plane>
+
+      <!--Websurface-->
+      <a-entity
+        class="clickable"
+        websurface="url:https://www.youtube.com/embed/88tgZ6Xq3J0; width:8; height:4; isInteractable: true;"
+        position="-0.25 1.5 -4"
+        on="click: console.log('clicked')"
+      ></a-entity>
+    </a-scene>
+  </body>
+</html>

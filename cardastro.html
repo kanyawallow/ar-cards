@@ -1,0 +1,569 @@
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <!-- <link rel="stylesheet" href="./styles.css" /> -->
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.2/dist/mindar-image-aframe.prod.js"></script>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const sceneEl = document.querySelector("a-scene");
+
+        let arSystem;
+
+        sceneEl.addEventListener("loaded", function () {
+          console.log("scene loaded");
+          arSystem = sceneEl.systems["mindar-image-system"];
+        });
+
+        // arReady event triggered when ready
+        sceneEl.addEventListener("arReady", (event) => {
+          console.log("MindAR is ready");
+        });
+        // arError event triggered when something went wrong. Mostly browser compatbility issue
+        sceneEl.addEventListener("arError", (event) => {
+          console.log("MindAR failed to start");
+        });
+
+        const startButton = document.querySelector("#startButton");
+        // const sound = sceneEl.querySelector('[sound]');
+
+        startButton.addEventListener("click", () => {
+          arSystem.start(); // start AR
+          
+          console.log("start experience");
+          
+          var playSound = document.querySelector("#startSound");
+          playSound.play();
+        });
+
+        const showInfo = () => {
+          let y = 0;
+          const profileButton = document.querySelector("#profile-button");
+          const webButton = document.querySelector("#web-button");
+          const emailButton = document.querySelector("#email-button");
+          const locationButton = document.querySelector("#location-button");
+          const text = document.querySelector("#text");
+
+          profileButton.setAttribute("visible", true);
+
+          setTimeout(() => {
+            webButton.setAttribute("visible", true);
+          }, 300);
+
+          setTimeout(() => {
+            emailButton.setAttribute("visible", true);
+          }, 600);
+
+          setTimeout(() => {
+            locationButton.setAttribute("visible", true);
+          }, 900);
+
+          let currentTab = "";
+          webButton.addEventListener("click", function (evt) {
+            text.setAttribute("value", "https://creativefringedigital.co.ke");
+            currentTab = "web";
+            window.open("https://creativefringedigital.co.ke", "_blank");
+          });
+
+          emailButton.addEventListener("click", function (evt) {
+            text.setAttribute("value", "info@creativefringedigital.co.ke");
+            currentTab = "email";
+            window.open(
+              "mailto:info@creativefringedigital.co.ke?subject=Hello Creative Fringe&body=message%20goes%20here"
+            );
+          });
+
+          profileButton.addEventListener("click", function (evt) {
+            console.log("profile");
+            text.setAttribute("value", "AR/VR Solutions");
+            currentTab = "profile";
+          });
+
+          locationButton.addEventListener("click", function (evt) {
+            console.log("loc");
+            text.setAttribute("value", "Nairobi, Kenya");
+            currentTab = "location";
+          });
+
+          text.addEventListener("click", function (evt) {
+            console.log("opening url");
+            if (currentTab === "web") {
+              window.location.href = "creativefringedigital.co.ke";
+            }
+          });
+        };
+
+        const showPortfolio = (done) => {
+          const portfolio = document.querySelector("#portfolio-panel");
+          const portfolioLeftButton = document.querySelector(
+            "#portfolio-left-button"
+          );
+          const portfolioRightButton = document.querySelector(
+            "#portfolio-right-button"
+          );
+          const paintandquestPreviewButton = document.querySelector(
+            "#paintandquest-preview-button"
+          );
+
+          let y = 0;
+          let currentItem = 0;
+
+          portfolio.setAttribute("visible", true);
+
+          const showPortfolioItem = (item) => {
+            for (let i = 0; i <= 2; i++) {
+              document
+                .querySelector("#portfolio-item" + i)
+                .setAttribute("visible", i === item);
+            }
+          };
+
+          const id = setInterval(() => {
+            y += 0.008;
+            if (y >= 0) {
+              clearInterval(id);
+              portfolioLeftButton.setAttribute("visible", true);
+              portfolioRightButton.setAttribute("visible", true);
+              portfolioLeftButton.addEventListener("click", (e) => {
+                currentItem = (currentItem + 1) % 3;
+                showPortfolioItem(currentItem);
+                // e.target.components.sound.playSound();
+              });
+              portfolioRightButton.addEventListener("click", (e) => {
+                currentItem = (currentItem - 1 + 3) % 3;
+                showPortfolioItem(currentItem);
+                // e.target.components.sound.playSound();
+              });
+
+              paintandquestPreviewButton.addEventListener("click", () => {
+                paintandquestPreviewButton.setAttribute("visible", false);
+                const testVideo = document.createElement("video");
+                const canplayWebm = testVideo.canPlayType(
+                  'video/webm; codecs="vp8, vorbis"'
+                );
+                if (canplayWebm == "") {
+                  document
+                    .querySelector("#paintandquest-video-link")
+                    .setAttribute("src", "#paintandquest-video-mp4");
+                  document.querySelector("#paintandquest-video-mp4").play();
+                } else {
+                  document
+                    .querySelector("#paintandquest-video-link")
+                    .setAttribute("src", "#paintandquest-video-webm");
+                  document.querySelector("#paintandquest-video-webm").play();
+                }
+              });
+
+              setTimeout(() => {
+                done();
+              }, 500);
+            }
+            portfolio.setAttribute("position", "0 " + y + " -0.01");
+          }, 10);
+        };
+
+        AFRAME.registerComponent("mytarget", {
+          init: function () {
+            this.el.addEventListener("targetFound", (event) => {
+              console.log("target found");
+              // this.el.emit("targetSound");
+              console.log("target sound");
+
+              setTimeout(() => {
+                showPortfolio(() => {
+                  setTimeout(() => {
+                    showInfo();
+                  }, 300);
+                });
+              }, 300);
+            });
+
+            this.el.addEventListener("targetLost", (event) => {
+              console.log("target lost");
+              // this.el.emit("targetSound");
+              console.log("target sound");
+            });
+
+            //this.el.emit('targetFound');
+          },
+        });
+      });
+    </script>
+    <style>
+      body {
+        margin: 0;
+      }
+
+      .container {
+        overflow: hidden;
+        position: absolute;
+        width: 100%;
+        height: 100%;
+      }
+
+      #loading-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: white;
+        z-index: 2;
+      }
+
+      #scanning-overlay {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        bottom: 0;
+        background: transparent;
+        z-index: 2;
+      }
+
+      @media (min-aspect-ratio: 1/1) {
+        #scanning-overlay .inner {
+          width: 50vh;
+          height: 50vh;
+        }
+      }
+
+      @media (max-aspect-ratio: 1/1) {
+        #scanning-overlay .inner {
+          width: 80vw;
+          height: 80vw;
+        }
+      }
+
+      #scanning-overlay .inner {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+
+        background: linear-gradient(to right, white 10px, transparent 10px) 0 0,
+          linear-gradient(to right, white 10px, transparent 10px) 0 100%,
+          linear-gradient(to left, white 10px, transparent 10px) 100% 0,
+          linear-gradient(to left, white 10px, transparent 10px) 100% 100%,
+          linear-gradient(to bottom, white 10px, transparent 10px) 0 0,
+          linear-gradient(to bottom, white 10px, transparent 10px) 100% 0,
+          linear-gradient(to top, white 10px, transparent 10px) 0 100%,
+          linear-gradient(to top, white 10px, transparent 10px) 100% 100%;
+        background-repeat: no-repeat;
+        background-size: 40px 40px;
+      }
+
+      #loading-overlay.hidden {
+        display: none;
+      }
+
+      #loading-overlay img {
+        width: 90%;
+        align-self: center;
+      }
+
+      #scanning-overlay.hidden {
+        display: none;
+      }
+
+      #scanning-overlay img {
+        opacity: 0.6;
+        width: 90%;
+        align-self: center;
+      }
+
+      #scanning-overlay .inner .scanline {
+        position: absolute;
+        width: 100%;
+        height: 10px;
+        background: white;
+        animation: move 2s linear infinite;
+      }
+
+      #scanning-overlay .notice {
+        position: absolute;
+        width: 100%;
+        bottom: 0;
+        color: "white";
+        align: center;
+        /*         height: 10px; */
+        /*         background: white; */
+        /*         animation: move 2s linear infinite; */
+      }
+
+      @keyframes move {
+        0%,
+        100% {
+          top: 0%;
+        }
+        50% {
+          top: calc(100% - 10px);
+        }
+      }
+
+      /*       #loading-overlay {
+        display: block;
+        width: 100%;
+        height: 100%;
+        background-color: red;
+      } */
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Loading Screen -->
+      <div id="loading-overlay" class="hidden">
+        <div class="inner">
+          <img
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/profile_cfd.png?v=1700318070087"
+          />
+        </div>
+      </div>
+
+      <!-- Scanning Screen -->
+      <div id="scanning-overlay" class="hidden">
+        <div class="inner">
+          <img
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/cfdcard.jpg?v=1700235551120"
+          />
+          <div class="notice"></div>
+          <div class="scanline"></div>
+        </div>
+      </div>
+
+      <div class="hidden" style="display: box; position: absolute; z-index: 1000">
+        <button id="startButton">Start</button>
+        <audio id="startSound">
+          <source src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/collect-sound.mp3?v=1700808823112">
+        </audio>
+      </div>
+
+      <a-scene
+        mindar-image="
+          imageTargetSrc: https://raw.githack.com/kanyawallow/ar-cards/main/assets/austronaut.mind; 
+          autoStart: false; showStats: false; 
+          uiLoading: #loading-overlay; 
+          uiScanning: #scanning-overlay;"
+        embedded
+        color-space="sRGB"
+        renderer="colorManagement: true, physicallyCorrectLights"
+        vr-mode-ui="enabled: false"
+        device-orientation-permission-ui="enabled: false"
+      >
+        <a-assets>
+          <audio
+            id="targetSound"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/collect-sound-ogg.ogg?v=1701007369667"
+          ></audio>
+          <img
+            id="card"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/cfdcard.jpg?v=1700235551120"
+          />
+          <img
+            id="icon-web"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/web-icon.png?v=1700396630515"
+          />
+          <img
+            id="icon-location"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/location-icon.png?v=1700419476565"
+          />
+          <img
+            id="icon-profile"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/profile_cfd.png?v=1700318070087"
+          />
+          <img
+            id="icon-phone"
+            crossorigin="anonymous"
+            src="./assets/icons/phone.png"
+          />
+          <img
+            id="icon-email"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/mail-icon.png?v=1700419475043"
+          />
+          <img
+            id="icon-play"
+            crossorigin="anonymous"
+            src="./assets/icons/play.png"
+          />
+          <img
+            id="icon-left"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/left.png?v=1700317036511"
+          />
+          <!--           <img id="icon-right" crossorigin="anonymous" src="./assets/icons/right.png" /> -->
+          <img
+            id="paintandquest-preview"
+            crossorigin="anonymous"
+            src="./assets/portfolio/paintandquest-preview.png"
+          />
+          <video
+            id="paintandquest-video-mp4"
+            autoplay="false"
+            loop="true"
+            crossorigin="anonymous"
+            src="https://cdn.glitch.global/a3085a1a-e21f-4116-b945-30940425c9e4/paintandquest.mp4?v=1700235856699"
+          ></video>
+          <video
+            id="paintandquest-video-webm"
+            autoplay="false"
+            loop="true"
+            src="./assets/portfolio/paintandquest.webm"
+          ></video>
+          <img
+            id="coffeemachine-preview"
+            src="./assets/portfolio/coffeemachine-preview.png"
+          />
+          <img id="peak-preview" src="./assets/portfolio/peak-preview.png" />
+        </a-assets>
+
+        <a-camera
+          position="0 0 0"
+          look-controls="enabled: false"
+          cursor="fuse: false; rayOrigin: mouse;"
+          raycaster="far: 10000; objects: .clickable"
+        >
+        </a-camera>
+
+        <a-entity id="mytarget" mytarget mindar-image-target="targetIndex: 0" sound="src: #targetSound">
+          <a-entity id="portfolio-panel" position="0 0 -0.01">
+            <a-entity
+              id="bg"
+              position="0 0 -0.01"
+              geometry="primitive: plane; width: 1.6; height: 1.2"
+              material="shader: flat; color: black; opacity: 0.5"
+            ></a-entity>
+            <a-text
+              id="text"
+              class="clickable"
+              value="Welcome To CFD"
+              color="#D81718"
+              align="center"
+              width="2"
+              position="0 0.4 0"
+              geometry="primitive:plane; height: 0.15; width: 1;"
+              material="color: white; opacity: 0.8"
+            ></a-text>
+            <a-entity id="portfolio-item0">
+              <a-video
+                id="paintandquest-video-link"
+                webkit-playsinline
+                playsinline
+                width="1"
+                height="0.552"
+                position="0 0 0"
+              ></a-video>
+              <a-image
+                id="paintandquest-preview-button"
+                class="clickable"
+                src="#paintandquest-preview"
+                alpha-test="0.5"
+                position="0 0 0"
+                height="0.552"
+                width="1"
+              >
+              </a-image>
+            </a-entity>
+            <a-entity id="portfolio-item1">
+              <a-image
+                class="clickable"
+                src="#coffeemachine-preview"
+                alpha-test="0.5"
+                position="0 0 0"
+                height="0.552"
+                width="1"
+              >
+              </a-image>
+            </a-entity>
+            <a-entity id="portfolio-item2">
+              <a-image
+                class="clickable"
+                src="#peak-preview"
+                alpha-test="0.5"
+                position="0 0 0"
+                height="0.552"
+                width="1"
+              >
+              </a-image>
+            </a-entity>
+
+            <a-image
+              id="portfolio-left-button"
+              class="clickable"
+              src="#icon-left"
+              position="-0.6 0 0"
+              height="0.15"
+              width="0.15"
+              sound="src: targetSound; on: click"
+            ></a-image>
+            <a-image
+              id="portfolio-right-button"
+              class="clickable"
+              src="#icon-left"
+              position="0.6 0 0"
+              rotation="0 0 180"
+              height="0.15"
+              width="0.15"
+              sound="src: targetSound; on: click"
+            ></a-image>
+          </a-entity>
+
+          <a-image
+            id="profile-button"
+            class="clickable"
+            src="#icon-profile"
+            position="-0.42 -0.4 0"
+            height="0.15"
+            width="0.15"
+            animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
+          ></a-image>
+
+          <a-image
+            id="web-button"
+            class="clickable"
+            src="#icon-web"
+            alpha-test="0.5"
+            position="-0.14 -0.4 0"
+            height="0.15"
+            width="0.15"
+            animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
+          ></a-image>
+
+          <a-image
+            id="email-button"
+            class="clickable"
+            src="#icon-email"
+            position="0.14 -0.4 0"
+            height="0.15"
+            width="0.15"
+            animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
+          ></a-image>
+
+          <a-image
+            id="location-button"
+            class="clickable"
+            src="#icon-location"
+            position="0.42 -0.4 0"
+            height="0.15"
+            width="0.15"
+            animation="property: scale; to: 1.2 1.2 1.2; dur: 1000; easing: easeInOutQuad; loop: true; dir: alternate"
+          ></a-image>
+        </a-entity>
+      </a-scene>
+    </div>
+  </body>
+</html>
